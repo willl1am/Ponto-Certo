@@ -7,13 +7,15 @@
 
       <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6">
-          <form class="d-flex gap-2" role="search" aria-label="Buscar linha de ônibus">
+          <form class="d-flex gap-2" role="search" aria-label="Buscar linha de ônibus" (submit)="buscar($event)">
             <label for="campoBusca" class="visually-hidden">Número ou nome da linha</label>
             <input
               id="campoBusca"
               type="search"
               class="form-control form-control-lg shadow-sm"
               placeholder="Digite o número ou nome da linha (ex: 8000, Lapa)"
+              [(ngModel)]="termoBusca"
+              name="termoBusca"
             />
             <button class="btn btn-warning btn-lg px-4 fw-semibold text-nowrap" type="submit">
               <i class="bi bi-search me-1"></i>Buscar
@@ -35,62 +37,40 @@
         <a routerLink="/favoritos" class="btn btn-sm btn-outline-primary">Ver todos</a>
       </div>
 
-      <ul class="inicio__linhas-lista">
-        <li class="inicio__linhas-item card border-0 shadow-sm" style="min-width: 280px">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="badge fs-6 fw-bold bg-primary px-3 py-2">8000</span>
-              <button class="btn btn-sm p-1 border-0 text-warning" aria-label="Remover dos favoritos">
-                <i class="bi bi-star-fill fs-5"></i>
-              </button>
-            </div>
-            <p class="fw-semibold mb-1 small">Terminal Lapa → Terminal Bandeira</p>
-            <p class="text-muted small mb-3">
-              <i class="bi bi-geo-alt me-1"></i>Av. Paulista, 1000
-            </p>
-            <a routerLink="/busca" class="btn btn-primary btn-sm w-100">
-              <i class="bi bi-clock me-1"></i>Ver horário
-            </a>
-          </div>
-        </li>
-
-        <li class="inicio__linhas-item card border-0 shadow-sm" style="min-width: 280px">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="badge fs-6 fw-bold bg-primary px-3 py-2">5100</span>
-              <button class="btn btn-sm p-1 border-0 text-warning" aria-label="Remover dos favoritos">
-                <i class="bi bi-star-fill fs-5"></i>
-              </button>
-            </div>
-            <p class="fw-semibold mb-1 small">Terminal Santo André → Terminal Penha</p>
-            <p class="text-muted small mb-3">
-              <i class="bi bi-geo-alt me-1"></i>R. das Flores, 200
-            </p>
-            <a routerLink="/busca" class="btn btn-primary btn-sm w-100">
-              <i class="bi bi-clock me-1"></i>Ver horário
-            </a>
-          </div>
-        </li>
-
-        <li class="inicio__linhas-item card border-0 shadow-sm" style="min-width: 280px"> 
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="badge fs-6 fw-bold bg-primary px-3 py-2">6290</span>
-              <button class="btn btn-sm p-1 border-0 text-warning" aria-label="Remover dos favoritos">
-                <i class="bi bi-star-fill fs-5"></i>
-              </button>
-            </div>
-            <p class="fw-semibold mb-1 small">Terminal Pinheiros → Terminal Tucuruvi</p>
-            <p class="text-muted small mb-3">
-              <i class="bi bi-geo-alt me-1"></i>Av. Rebouças, 450
-            </p>
-            <a routerLink="/busca" class="btn btn-primary btn-sm w-100">
-              <i class="bi bi-clock me-1"></i>Ver horário
-            </a>
-          </div>
-        </li>
-
-      </ul>
+      @if (favoritos.length > 0) {
+        <ul class="inicio__linhas-lista d-flex gap-3 overflow-auto pb-2 list-unstyled mb-0">
+          @for (fav of favoritos; track fav.id) {
+            <li class="inicio__linhas-item card border-0 shadow-sm flex-shrink-0" style="min-width: 280px">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="badge fs-6 fw-bold bg-primary px-3 py-2">{{ fav.letreiro }}</span>
+                  <button class="btn btn-sm p-1 border-0 text-warning"
+                    aria-label="Remover dos favoritos"
+                    (click)="remover(fav.id)">
+                    <i class="bi bi-star-fill fs-5"></i>
+                  </button>
+                </div>
+                <p class="fw-semibold mb-1 small">{{ fav.nomeLinha }}</p>
+                <p class="text-muted small mb-3">
+                  <i class="bi bi-geo-alt me-1"></i>{{ fav.endereco }}
+                </p>
+                <a routerLink="/busca" class="btn btn-primary btn-sm w-100">
+                  <i class="bi bi-clock me-1"></i>Ver horário
+                </a>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-star display-4 d-block mb-3 opacity-25"></i>
+          <p class="fs-5 fw-semibold">Você ainda não tem favoritos.</p>
+          <p class="mb-4">Busque uma linha e salve para acessar rapidamente!</p>
+          <a routerLink="/busca" class="btn btn-primary px-4">
+            <i class="bi bi-search me-2"></i>Buscar uma linha
+          </a>
+        </div>
+      }
 
     </div>
   </section>
