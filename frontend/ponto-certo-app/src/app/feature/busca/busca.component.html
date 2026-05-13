@@ -1,0 +1,274 @@
+<main class="py-4">
+  <div class="container">
+
+    @if (step === 1) {
+
+      <div class="mb-4">
+        <h1 class="fs-4 fw-bold mb-1">Buscar linha</h1>
+        <p class="text-muted small mb-3">Digite o número ou nome da linha</p>
+        <form class="d-flex gap-2" role="search">
+          <label for="buscaLinha" class="visually-hidden">Número ou nome da linha</label>
+          <input id="buscaLinha" type="search" class="form-control form-control-lg"
+            placeholder="Ex: 8000, Lapa, Bandeira" />
+          <button class="btn btn-primary btn-lg px-4" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+      </div>
+
+      @if (loading) {
+        <div class="d-flex flex-column gap-3">
+          @for (i of [1,2,3]; track i) {
+            <div class="card border-0 shadow-sm p-3">
+              <div class="skeleton mb-2" style="height:24px; width:80px"></div>
+              <div class="skeleton mb-2" style="height:16px; width:60%"></div>
+              <div class="skeleton" style="height:16px; width:40%"></div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (erro) {
+        <div class="card border-0 shadow-sm text-center py-5">
+          <div class="card-body">
+            <i class="bi bi-exclamation-triangle-fill text-warning display-4 mb-3"></i>
+            <p class="fs-5 fw-semibold mb-1">Não foi possível carregar os dados.</p>
+            <p class="text-muted mb-4">Verifique sua conexão e tente novamente.</p>
+            <button class="btn btn-primary px-4">
+              <i class="bi bi-arrow-clockwise me-2"></i>Tentar novamente
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (!loading && !erro) {
+        <p class="text-muted small mb-3">3 linhas encontradas para <strong>"8000"</strong></p>
+        <div class="d-flex flex-column gap-3">
+
+          <div class="card border-0 shadow-sm">
+            <div class="card-body d-flex align-items-center gap-3">
+              <span class="badge fs-5 fw-bold bg-primary px-3 py-2 flex-shrink-0">8000</span>
+              <div class="flex-grow-1">
+                <p class="fw-semibold mb-0">8000-10</p>
+                <p class="text-muted small mb-0">
+                  <i class="bi bi-arrow-right me-1"></i>Terminal Lapa → Terminal Bandeira
+                </p>
+              </div>
+              <button class="btn btn-primary btn-sm px-3">Selecionar</button>
+            </div>
+          </div>
+
+          <div class="card border-0 shadow-sm">
+            <div class="card-body d-flex align-items-center gap-3">
+              <span class="badge fs-5 fw-bold bg-primary px-3 py-2 flex-shrink-0">8000</span>
+              <div class="flex-grow-1">
+                <p class="fw-semibold mb-0">8000-21</p>
+                <p class="text-muted small mb-0">
+                  <i class="bi bi-arrow-left me-1"></i>Terminal Bandeira → Terminal Lapa
+                </p>
+              </div>
+              <button class="btn btn-primary btn-sm px-3">Selecionar</button>
+            </div>
+          </div>
+
+          <div class="card border-0 shadow-sm">
+            <div class="card-body d-flex align-items-center gap-3">
+              <span class="badge fs-5 fw-bold bg-primary px-3 py-2 flex-shrink-0">8000</span>
+              <div class="flex-grow-1">
+                <p class="fw-semibold mb-0">8000-41</p>
+                <p class="text-muted small mb-0">
+                  <i class="bi bi-arrow-right me-1"></i>Terminal Lapa → Metrô Consolação
+                </p>
+              </div>
+              <button class="btn btn-primary btn-sm px-3">Selecionar</button>
+            </div>
+          </div>
+
+        </div>
+      }
+    }
+
+    @if (step === 2) {
+
+      <nav aria-label="Etapas da busca" class="mb-4">
+        <ol class="d-flex gap-2 list-unstyled mb-0 flex-wrap align-items-center small text-muted">
+          <li class="text-primary fw-semibold">
+            <i class="bi bi-check-circle-fill me-1"></i>Linha selecionada
+          </li>
+          <li><i class="bi bi-chevron-right"></i></li>
+          <li class="text-primary fw-semibold">Escolha sua parada</li>
+          <li><i class="bi bi-chevron-right"></i></li>
+          <li>Ver previsão</li>
+        </ol>
+      </nav>
+
+      <div class="card border-0 bg-primary text-white mb-4 p-3 rounded-3">
+        <div class="d-flex align-items-center gap-3">
+          <span class="badge bg-white text-primary fs-5 fw-bold px-3 py-2">8000</span>
+          <div>
+            <p class="fw-semibold mb-0">8000-10</p>
+            <p class="small opacity-75 mb-0">Terminal Lapa → Terminal Bandeira</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="filtroParada" class="visually-hidden">Filtrar parada</label>
+        <input id="filtroParada" type="search" class="form-control"
+          placeholder="Filtrar por nome ou endereço da parada..." />
+      </div>
+
+      <div class="d-flex flex-column gap-2">
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body d-flex align-items-center gap-3">
+            <i class="bi bi-geo-alt-fill text-primary fs-5 flex-shrink-0"></i>
+            <div class="flex-grow-1">
+              <p class="fw-semibold mb-0 small">Terminal Lapa</p>
+              <p class="text-muted mb-0" style="font-size:0.8rem">Av. Antártica, 381 — Lapa</p>
+            </div>
+            <button class="btn btn-primary btn-sm px-3">Ver previsão</button>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body d-flex align-items-center gap-3">
+            <i class="bi bi-geo-alt-fill text-primary fs-5 flex-shrink-0"></i>
+            <div class="flex-grow-1">
+              <p class="fw-semibold mb-0 small">Av. Paulista / MASP</p>
+              <p class="text-muted mb-0" style="font-size:0.8rem">Av. Paulista, 1578 — Bela Vista</p>
+            </div>
+            <button class="btn btn-primary btn-sm px-3">Ver previsão</button>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body d-flex align-items-center gap-3">
+            <i class="bi bi-geo-alt-fill text-primary fs-5 flex-shrink-0"></i>
+            <div class="flex-grow-1">
+              <p class="fw-semibold mb-0 small">Largo do Arouche</p>
+              <p class="text-muted mb-0" style="font-size:0.8rem">R. Aurora, 10 — República</p>
+            </div>
+            <button class="btn btn-primary btn-sm px-3">Ver previsão</button>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body d-flex align-items-center gap-3">
+            <i class="bi bi-geo-alt-fill text-primary fs-5 flex-shrink-0"></i>
+            <div class="flex-grow-1">
+              <p class="fw-semibold mb-0 small">Terminal Bandeira</p>
+              <p class="text-muted mb-0" style="font-size:0.8rem">Av. São João, 2 — Centro</p>
+            </div>
+            <button class="btn btn-primary btn-sm px-3">Ver previsão</button>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="btn btn-outline-secondary mt-4">
+        <i class="bi bi-arrow-left me-2"></i>Nova busca
+      </button>
+    }
+
+    @if (step === 3) {
+
+      <nav aria-label="Etapas da busca" class="mb-4">
+        <ol class="d-flex gap-2 list-unstyled mb-0 flex-wrap align-items-center small text-muted">
+          <li class="text-primary fw-semibold">
+            <i class="bi bi-check-circle-fill me-1"></i>Linha selecionada
+          </li>
+          <li><i class="bi bi-chevron-right"></i></li>
+          <li class="text-primary fw-semibold">
+            <i class="bi bi-check-circle-fill me-1"></i>Parada escolhida
+          </li>
+          <li><i class="bi bi-chevron-right"></i></li>
+          <li class="text-primary fw-semibold">Previsão</li>
+        </ol>
+      </nav>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <span class="badge fs-4 fw-bold bg-primary px-3 py-2">8000</span>
+            <div>
+              <p class="fw-bold mb-0">Terminal Lapa → Terminal Bandeira</p>
+              <p class="text-muted small mb-0">
+                <i class="bi bi-geo-alt me-1"></i>Av. Paulista, 1578 — MASP
+              </p>
+            </div>
+          </div>
+
+          <p class="text-muted small mb-3">
+            <i class="bi bi-clock me-1"></i>Atualizado às 14:32
+          </p>
+
+          <hr />
+
+          <div class="d-flex align-items-center gap-4 py-3 border-bottom">
+            <div class="text-center flex-shrink-0">
+              <span class="chegada-tempo">7</span>
+              <span class="d-block text-muted small fw-semibold">min</span>
+            </div>
+            <div class="flex-grow-1">
+              <p class="mb-1 fw-semibold">Chegada: 14:39</p>
+              <p class="text-muted small mb-1">Prefixo: 12.345</p>
+              <span class="badge badge-acessivel">
+                <i class="bi bi-person-wheelchair me-1"></i>Acessível
+              </span>
+            </div>
+            <i class="bi bi-bus-front-fill text-primary fs-3 opacity-25"></i>
+          </div>
+
+          <div class="d-flex align-items-center gap-4 py-3">
+            <div class="text-center flex-shrink-0">
+              <span class="chegada-tempo">15</span>
+              <span class="d-block text-muted small fw-semibold">min</span>
+            </div>
+            <div class="flex-grow-1">
+              <p class="mb-1 fw-semibold">Chegada: 14:47</p>
+              <p class="text-muted small mb-1">Prefixo: 67.890</p>
+              <span class="badge bg-light text-muted border">
+                Não acessível
+              </span>
+            </div>
+            <i class="bi bi-bus-front-fill text-primary fs-3 opacity-25"></i>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-warning fw-semibold">
+          <i class="bi bi-star me-2"></i>Salvar nos Favoritos
+        </button>
+        <button class="btn btn-outline-primary">
+          <i class="bi bi-arrow-clockwise me-2"></i>Atualizar
+        </button>
+        <button class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-2"></i>Trocar parada
+        </button>
+        <button class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-2"></i>Nova busca
+        </button>
+      </div>
+
+    }
+
+  </div>
+</main>
+
+@if (mostrarToast) {
+  <div class="toast-container">
+    <div class="toast show align-items-center border-0 text-white bg-success" role="alert">
+      <div class="d-flex">
+        <div class="toast-body fw-semibold">
+          <i class="bi bi-check-circle-fill me-2"></i>Linha salva nos favoritos!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+          aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+}

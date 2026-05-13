@@ -1,13 +1,13 @@
-<header class="border-bottom shadow-sm">
-  <nav class="navbar navbar-expand-md bg-white">
+<header class="border-bottom shadow-sm sticky-top bg-white">
+  <nav class="navbar navbar-expand-md">
     <div class="container">
 
-      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-primary" href="/">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-primary" routerLink="/">
         <i class="bi bi-bus-front-fill fs-4"></i>
         <span class="fs-5">Ponto Certo</span>
       </a>
 
-      <button class="navbar-toggler" type="button"
+      <button class="navbar-toggler border-0" type="button"
         data-bs-toggle="collapse" data-bs-target="#navMenu"
         aria-controls="navMenu" aria-expanded="false" aria-label="Abrir menu">
         <span class="navbar-toggler-icon"></span>
@@ -16,10 +16,20 @@
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto gap-1">
           <li class="nav-item">
-            <a class="nav-link" href="/"><i class="bi bi-house me-1"></i>Início</a>
+            <a class="nav-link px-3" routerLink="/"
+               routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+              <i class="bi bi-house me-1"></i>Início
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/favoritos"><i class="bi bi-star me-1"></i>Favoritos</a>
+            <a class="nav-link px-3" routerLink="/busca" routerLinkActive="active">
+              <i class="bi bi-search me-1"></i>Linhas
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" routerLink="/favoritos" routerLinkActive="active">
+              <i class="bi bi-star me-1"></i>Favoritos
+            </a>
           </li>
         </ul>
       </div>

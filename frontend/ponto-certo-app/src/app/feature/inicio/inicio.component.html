@@ -1,3 +1,99 @@
-<section class="inicio container">
-  
-</section>
+<main>
+
+  <section class="hero py-5" style="background: linear-gradient(135deg, #1A237E 0%, #283593 100%)">
+    <div class="container text-center text-white py-3">
+      <h1 class="display-5 fw-bold mb-3">Saiba quando seu ônibus vai chegar</h1>
+      <p class="lead mb-5 opacity-75">Consulta em tempo real. Sem download. Sem complicação.</p>
+
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+          <form class="d-flex gap-2" role="search" aria-label="Buscar linha de ônibus">
+            <label for="campoBusca" class="visually-hidden">Número ou nome da linha</label>
+            <input
+              id="campoBusca"
+              type="search"
+              class="form-control form-control-lg shadow-sm"
+              placeholder="Digite o número ou nome da linha (ex: 8000, Lapa)"
+            />
+            <button class="btn btn-warning btn-lg px-4 fw-semibold text-nowrap" type="submit">
+              <i class="bi bi-search me-1"></i>Buscar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-4">
+    <div class="container">
+
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="fs-5 fw-semibold mb-0 d-flex align-items-center gap-2">
+          <i class="bi bi-star-fill text-warning"></i>
+          Suas Linhas Favoritas
+        </h2>
+        <a routerLink="/favoritos" class="btn btn-sm btn-outline-primary">Ver todos</a>
+      </div>
+
+      <div class="d-flex gap-3 overflow-auto pb-2">
+
+        <div class="card border-0 shadow-sm flex-shrink-0" style="min-width: 280px">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge fs-6 fw-bold bg-primary px-3 py-2">8000</span>
+              <button class="btn btn-sm p-1 border-0 text-warning" aria-label="Remover dos favoritos">
+                <i class="bi bi-star-fill fs-5"></i>
+              </button>
+            </div>
+            <p class="fw-semibold mb-1 small">Terminal Lapa → Terminal Bandeira</p>
+            <p class="text-muted small mb-3">
+              <i class="bi bi-geo-alt me-1"></i>Av. Paulista, 1000
+            </p>
+            <a routerLink="/busca" class="btn btn-primary btn-sm w-100">
+              <i class="bi bi-clock me-1"></i>Ver horário
+            </a>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm flex-shrink-0" style="min-width: 280px">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge fs-6 fw-bold bg-primary px-3 py-2">5100</span>
+              <button class="btn btn-sm p-1 border-0 text-warning" aria-label="Remover dos favoritos">
+                <i class="bi bi-star-fill fs-5"></i>
+              </button>
+            </div>
+            <p class="fw-semibold mb-1 small">Terminal Santo André → Terminal Penha</p>
+            <p class="text-muted small mb-3">
+              <i class="bi bi-geo-alt me-1"></i>R. das Flores, 200
+            </p>
+            <a routerLink="/busca" class="btn btn-primary btn-sm w-100">
+              <i class="bi bi-clock me-1"></i>Ver horário
+            </a>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm flex-shrink-0" style="min-width: 280px">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge fs-6 fw-bold bg-primary px-3 py-2">6290</span>
+              <button class="btn btn-sm p-1 border-0 text-warning" aria-label="Remover dos favoritos">
+                <i class="bi bi-star-fill fs-5"></i>
+              </button>
+            </div>
+            <p class="fw-semibold mb-1 small">Terminal Pinheiros → Terminal Tucuruvi</p>
+            <p class="text-muted small mb-3">
+              <i class="bi bi-geo-alt me-1"></i>Av. Rebouças, 450
+            </p>
+            <a routerLink="/busca" class="btn btn-primary btn-sm w-100">
+              <i class="bi bi-clock me-1"></i>Ver horário
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+</main>
