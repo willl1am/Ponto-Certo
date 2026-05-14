@@ -26,7 +26,6 @@ public class ConsumoApi {
                     .build();
 
             HttpResponse<String> authResponse = client.send(authRequest, HttpResponse.BodyHandlers.ofString());
-            ;
 
             cookieSessao = authResponse.headers().firstValue("Set-Cookie").orElse("");
 
