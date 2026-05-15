@@ -49,6 +49,15 @@ public class UsuarioController {
         user.getLinhasFavoritas().add((Linha) linhaEncontrada);
         return usuarioRepository.save(user);
     }
+    @DeleteMapping ("/{usuarioId}/favoritar/{linhaId}")
+    public Usuarios removerLinha(@PathVariable Long usuarioId, @PathVariable Long linhaId) {
+        Usuarios user = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Utilizador não encontrado"));
+        Linha linha = linhaRepository.findById(linhaId)
+                .orElseThrow(() -> new RuntimeException("Linha não encontrada"));
+        user.getLinhasFavoritas().remove(linha);
+        return usuarioRepository.save(user);
+    }
 
 }
 

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface LinhaRepository extends JpaRepository<Linha,Integer> {
+public interface LinhaRepository extends JpaRepository<Linha,Long> {
 
-    Optional<Object> findById(Long linhaId);
+
 }
