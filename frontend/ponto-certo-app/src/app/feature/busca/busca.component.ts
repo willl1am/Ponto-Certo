@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FavoritosMockService } from '../../core/services/favoritos-mock.service';
+import { LinhaService, LinhaSpTrans } from '../../core/services/linha.service';
 
 interface Linha {
   cl: number;
@@ -34,7 +35,8 @@ interface Veiculo {
 })
 export class BuscaComponent {
 
-  private favoritosService = inject(FavoritosMockService);
+  private favoritosServico = inject(FavoritosMockService);
+  private linhaServico = inject(LinhaService);
 
   step = 1;
   loading = false;
@@ -82,19 +84,34 @@ export class BuscaComponent {
 
   get jaFavoritado(): boolean {
     if (!this.linhaSelecionada || !this.paradaSelecionada) return false;
-    return this.favoritosService.isFavoritado(this.linhaSelecionada.cl, this.paradaSelecionada.cp);
+    return this.favoritosServico.isFavoritado(this.linhaSelecionada.cl, this.paradaSelecionada.cp);
   }
 
-  buscar(event: Event): void {
-    event.preventDefault();
+  buscar(evento: Event): void {
+    evento.preventDefault();
     if (!this.termoBusca.trim()) return;
     this.buscaRealizada = true;
     this.loading = true;
+    this.erro = false;
     this.linhas = [];
-    setTimeout(() => {
-      this.loading = false;
-      this.linhas = this.LINHAS_MOCK;
-    }, 800);
+
+    this.linhaServico.buscarNaSPTrans(this.termoBusca).subscribe({
+      next: (resultado) => {
+        this.loading = false;
+        this.linhas = resultado.map((item: LinhaSpTrans) => ({
+          cl: item.cl,
+          letreiro: item.lt,
+          lt: item.lt,
+          sentido: item.sl,
+          tp: item.tp,
+          ts: item.ts
+        }));
+      },
+      error: () => {
+        this.loading = false;
+        this.erro = true;
+      }
+    });
   }
 
   selecionarLinha(linha: Linha): void {
@@ -134,13 +151,13 @@ export class BuscaComponent {
   toggleFavorito(): void {
     if (!this.linhaSelecionada || !this.paradaSelecionada) return;
     if (this.jaFavoritado) {
-      const fav = this.favoritosService.findByLinhaPrada(
+      const fav = this.favoritosServico.findByLinhaPrada(
         this.linhaSelecionada.cl, this.paradaSelecionada.cp
       );
-      if (fav) this.favoritosService.remove(fav.id);
+      if (fav) this.favoritosServico.remove(fav.id);
       this.exibirToast('Linha removida dos favoritos');
     } else {
-      this.favoritosService.add({
+      this.favoritosServico.add({
         codigoLinha: this.linhaSelecionada.cl,
         letreiro:    this.linhaSelecionada.lt,
         nomeLinha:   `${this.linhaSelecionada.tp} → ${this.linhaSelecionada.ts}`,
