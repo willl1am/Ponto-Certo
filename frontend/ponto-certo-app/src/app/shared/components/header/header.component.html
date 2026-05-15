@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-md">
     <div class="container">
 
-      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-primary" routerLink="/">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-primary" routerLink="/inicio">
         <i class="bi bi-bus-front-fill fs-4"></i>
         <span class="fs-5">Ponto Certo</span>
       </a>
@@ -16,7 +16,7 @@
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto gap-1">
           <li class="nav-item">
-            <a class="nav-link px-3" routerLink="/"
+            <a class="nav-link px-3" routerLink="/inicio"
                routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
               <i class="bi bi-house me-1"></i>Início
             </a>
@@ -32,6 +32,9 @@
             </a>
           </li>
         </ul>
+        <button class="btn btn-outline-danger ms-3" (click)="sair()">
+          <i class="bi bi-box-arrow-right me-1"></i>Sair
+        </button>
       </div>
 
     </div>
