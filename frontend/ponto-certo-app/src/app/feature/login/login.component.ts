@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,15 +12,16 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginComponent {
 
-  private router = inject(Router);
+  private roteador = inject(Router);
+  private autenticacao = inject(AuthService);
 
   email = '';
   senha = '';
   erro = '';
   carregando = false;
 
-  entrar(event: Event): void {
-    event.preventDefault();
+  entrar(evento: Event): void {
+    evento.preventDefault();
     this.erro = '';
 
     if (!this.email.trim() || !this.senha.trim()) {
@@ -38,9 +40,15 @@ export class LoginComponent {
     }
 
     this.carregando = true;
-    setTimeout(() => {
-      this.carregando = false;
-      this.router.navigate(['/inicio']);
-    }, 800);
+    this.autenticacao.login(this.email, this.senha).subscribe({
+      next: () => {
+        this.carregando = false;
+        this.roteador.navigate(['/inicio']);
+      },
+      error: () => {
+        this.carregando = false;
+        this.erro = 'E-mail ou senha incorretos.';
+      }
+    });
   }
 }

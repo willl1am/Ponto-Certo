@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/git/SENAC/Ponto-Certo -type f -name \"*.component.ts\" -o -name \"*.service.ts\" | head -30)",
+      "Bash(xargs grep -l \"logout\\\\|signOut\\\\|auth\")",
+      "Bash(git -C \"C:/git/SENAC/Ponto-Certo\" remote -v)",
+      "Bash(git -C \"C:/git/SENAC/Ponto-Certo\" remote add upstream https://github.com/willl1am/Ponto-Certo.git)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(sc query *)",
+      "Bash(findstr -i mysql)",
+      "Bash(net stop *)",
+      "Bash(net start *)",
+      "Bash(dir \"C:\\\\ProgramData\\\\MySQL\")",
+      "Bash(./mvnw spring-boot:run)",
+      "Bash(curl -s http://localhost:8080)"
+    ]
+  }
+}

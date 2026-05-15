@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-cadastro',
@@ -12,7 +13,9 @@ import { FormsModule } from '@angular/forms';
 export class CadastroComponent {
 
   private router = inject(Router);
+  private authService = inject(AuthService);
 
+  nome = '';
   email = '';
   senha = '';
   confirmarSenha = '';
@@ -23,7 +26,7 @@ export class CadastroComponent {
     event.preventDefault();
     this.erro = '';
 
-    if (!this.email.trim() || !this.senha.trim() || !this.confirmarSenha.trim()) {
+    if (!this.nome.trim() || !this.email.trim() || !this.senha.trim() || !this.confirmarSenha.trim()) {
       this.erro = 'Preencha todos os campos.';
       return;
     }
@@ -44,9 +47,17 @@ export class CadastroComponent {
     }
 
     this.carregando = true;
-    setTimeout(() => {
-      this.carregando = false;
-      this.router.navigate(['/login']);
-    }, 800);
+    this.authService.cadastrar(this.nome, this.email, this.senha).subscribe({
+      next: () => {
+        this.carregando = false;
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.carregando = false;
+        this.erro = err.status === 400
+          ? 'E-mail já cadastrado.'
+          : 'Erro ao criar conta. Tente novamente.';
+      }
+    });
   }
 }
