@@ -5,6 +5,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 
@@ -20,9 +22,11 @@ public class PontoCertoApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		System.out.println("Iniciando teste com a SPTrans...");
-		Scanner sc = new Scanner(System.in);
-		var busca = sc.nextLine();
-		String jsonResposta = consumoApi.obterDadosSPTrans("/Linha/Buscar?termosBusca="+ busca);
+		Scanner leitura = new Scanner(System.in);
+		String termoBusca = leitura.nextLine();
+		String termoFormatado = URLEncoder.encode(termoBusca, StandardCharsets.UTF_8);
+
+		String jsonResposta = consumoApi.obterDadosSPTrans("/Linha/Buscar?termosBusca=" + termoFormatado);
 
 		System.out.println("Resposta da SPTrans:");
 		System.out.println(jsonResposta);
