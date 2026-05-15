@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { FavoritosMockService, Favorito } from '../../core/services/favoritos-mock.service';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService, LinhaFavorita } from '../../core/services/auth.service';
+import { LinhaService } from '../../core/services/linha.service';
 
 @Component({
   selector: 'app-inicio',
@@ -14,18 +14,17 @@ import { AuthService } from '../../core/services/auth.service';
 export class InicioComponent implements OnInit {
 
   private roteador = inject(Router);
-  private favoritosServico = inject(FavoritosMockService);
   private autenticacao = inject(AuthService);
+  private linhaServico = inject(LinhaService);
 
   nomeUsuario = '';
-
   termoBusca = '';
-  favoritos: Favorito[] = [];
+  favoritos: LinhaFavorita[] = [];
 
   ngOnInit(): void {
     const usuario = this.autenticacao.obterUsuario();
     this.nomeUsuario = usuario?.nome ?? '';
-    this.favoritos = this.favoritosServico.getAll();
+    this.favoritos = usuario?.linhasFavoritas ?? [];
   }
 
   buscar(evento: Event): void {
@@ -34,8 +33,15 @@ export class InicioComponent implements OnInit {
     this.roteador.navigate(['/busca'], { queryParams: { q: this.termoBusca } });
   }
 
-  remover(id: number): void {
-    this.favoritosServico.remove(id);
-    this.favoritos = this.favoritosServico.getAll();
+  remover(linhaId: number): void {
+    const usuario = this.autenticacao.obterUsuario();
+    if (!usuario) return;
+
+    this.linhaServico.removerFavorito(usuario.id, linhaId).subscribe({
+      next: (usuarioAtualizado) => {
+        this.autenticacao.salvarUsuario(usuarioAtualizado);
+        this.favoritos = usuarioAtualizado.linhasFavoritas;
+      }
+    });
   }
 }

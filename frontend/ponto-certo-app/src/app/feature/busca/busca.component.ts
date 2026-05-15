@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { FavoritosMockService } from '../../core/services/favoritos-mock.service';
 import { LinhaService, LinhaSpTrans } from '../../core/services/linha.service';
+import { AuthService } from '../../core/services/auth.service';
 
 interface Linha {
   cl: number;
@@ -33,16 +33,19 @@ interface Veiculo {
   templateUrl: './busca.component.html',
   styleUrl: './busca.component.scss'
 })
-export class BuscaComponent {
+export class BuscaComponent implements OnInit {
 
-  private favoritosServico = inject(FavoritosMockService);
   private linhaServico = inject(LinhaService);
+  private autenticacao = inject(AuthService);
+  private rota = inject(ActivatedRoute);
 
   step = 1;
   loading = false;
   erro = false;
   mostrarToast = false;
   toastMensagem = '';
+  avisoEndpoint = '';
+  mostrarAvisoEndpoint = false;
   buscaRealizada = false;
 
   termoBusca = '';
@@ -56,23 +59,36 @@ export class BuscaComponent {
   paradas: Parada[] = [];
   veiculos: Veiculo[] = [];
 
-  private readonly LINHAS_MOCK: Linha[] = [
-    { cl: 1001, letreiro: '8000-10', lt: '8000', sentido: 1, tp: 'Terminal Lapa',    ts: 'Terminal Bandeira' },
-    { cl: 1002, letreiro: '8000-21', lt: '8000', sentido: 2, tp: 'Terminal Bandeira', ts: 'Terminal Lapa' },
-    { cl: 1003, letreiro: '8000-41', lt: '8000', sentido: 1, tp: 'Terminal Lapa',    ts: 'Metrô Consolação' },
-  ];
-
   private readonly PARADAS_MOCK: Parada[] = [
-    { cp: 101, np: 'Terminal Lapa',       ed: 'Av. Antártica, 381 — Lapa'          },
-    { cp: 102, np: 'Av. Paulista / MASP', ed: 'Av. Paulista, 1578 — Bela Vista'    },
-    { cp: 103, np: 'Largo do Arouche',    ed: 'R. Aurora, 10 — República'           },
-    { cp: 104, np: 'Terminal Bandeira',   ed: 'Av. São João, 2 — Centro'            },
+    { cp: 101, np: 'Terminal Lapa',       ed: 'Av. Antártica, 381 — Lapa'       },
+    { cp: 102, np: 'Av. Paulista / MASP', ed: 'Av. Paulista, 1578 — Bela Vista' },
+    { cp: 103, np: 'Largo do Arouche',    ed: 'R. Aurora, 10 — República'        },
+    { cp: 104, np: 'Terminal Bandeira',   ed: 'Av. São João, 2 — Centro'         },
   ];
 
   private readonly VEICULOS_MOCK: Veiculo[] = [
     { p: '12.345', t: '14:39', a: true,  minutos: 7  },
     { p: '67.890', t: '14:47', a: false, minutos: 15 },
   ];
+
+  get paradasDaBusca(): string {
+    const paradas = new Set<string>();
+    this.linhas.forEach(l => { paradas.add(l.tp); paradas.add(l.ts); });
+    return [...paradas].join(', ');
+  }
+
+  get jaFavoritadoPrimeira(): boolean {
+    if (!this.linhas.length) return false;
+    const usuario = this.autenticacao.obterUsuario();
+    if (!usuario) return false;
+    return usuario.linhasFavoritas.some(f => f.letreiro === this.linhas[0].lt);
+  }
+
+  favoritarPrimeiraDaBusca(): void {
+    if (!this.linhas.length) return;
+    this.linhaSelecionada = this.linhas[0];
+    this.toggleFavorito();
+  }
 
   get paradasFiltradas(): Parada[] {
     const termo = this.filtroParada.toLowerCase();
@@ -83,12 +99,24 @@ export class BuscaComponent {
   }
 
   get jaFavoritado(): boolean {
-    if (!this.linhaSelecionada || !this.paradaSelecionada) return false;
-    return this.favoritosServico.isFavoritado(this.linhaSelecionada.cl, this.paradaSelecionada.cp);
+    if (!this.linhaSelecionada) return false;
+    const usuario = this.autenticacao.obterUsuario();
+    if (!usuario) return false;
+    return usuario.linhasFavoritas.some(f => f.letreiro === this.linhaSelecionada!.lt);
   }
 
-  buscar(evento: Event): void {
-    evento.preventDefault();
+  ngOnInit(): void {
+    this.rota.queryParams.subscribe(params => {
+      const termo = params['q'];
+      if (termo) {
+        this.termoBusca = termo;
+        this.buscar();
+      }
+    });
+  }
+
+  buscar(evento?: Event): void {
+    evento?.preventDefault();
     if (!this.termoBusca.trim()) return;
     this.buscaRealizada = true;
     this.loading = true;
@@ -120,6 +148,7 @@ export class BuscaComponent {
     this.step = 2;
     this.loading = true;
     this.paradas = [];
+    this.exibirAvisoEndpoint('Endpoint GET /paradas/buscar-sptrans não implementado no backend. Exibindo dados mock.');
     setTimeout(() => {
       this.loading = false;
       this.paradas = this.PARADAS_MOCK;
@@ -131,6 +160,7 @@ export class BuscaComponent {
     this.step = 3;
     this.loading = true;
     this.veiculos = [];
+    this.exibirAvisoEndpoint('Endpoint GET /previsao não implementado no backend. Exibindo dados mock.');
     setTimeout(() => {
       this.loading = false;
       this.veiculos = this.VEICULOS_MOCK;
@@ -141,6 +171,7 @@ export class BuscaComponent {
   atualizar(): void {
     this.loading = true;
     this.veiculos = [];
+    this.exibirAvisoEndpoint('Endpoint GET /previsao não implementado no backend. Exibindo dados mock.');
     setTimeout(() => {
       this.loading = false;
       this.veiculos = this.VEICULOS_MOCK;
@@ -149,23 +180,33 @@ export class BuscaComponent {
   }
 
   toggleFavorito(): void {
-    if (!this.linhaSelecionada || !this.paradaSelecionada) return;
+    if (!this.linhaSelecionada) return;
+    const usuario = this.autenticacao.obterUsuario();
+    if (!usuario) return;
+
     if (this.jaFavoritado) {
-      const fav = this.favoritosServico.findByLinhaPrada(
-        this.linhaSelecionada.cl, this.paradaSelecionada.cp
-      );
-      if (fav) this.favoritosServico.remove(fav.id);
-      this.exibirToast('Linha removida dos favoritos');
-    } else {
-      this.favoritosServico.add({
-        codigoLinha: this.linhaSelecionada.cl,
-        letreiro:    this.linhaSelecionada.lt,
-        nomeLinha:   `${this.linhaSelecionada.tp} → ${this.linhaSelecionada.ts}`,
-        codigoParada: this.paradaSelecionada.cp,
-        nomeParada:   this.paradaSelecionada.np,
-        endereco:     this.paradaSelecionada.ed,
+      const favorito = usuario.linhasFavoritas.find(f => f.letreiro === this.linhaSelecionada!.lt);
+      if (!favorito) return;
+      this.linhaServico.removerFavorito(usuario.id, favorito.id).subscribe({
+        next: (usuarioAtualizado) => {
+          this.autenticacao.salvarUsuario(usuarioAtualizado);
+          this.linhaServico.removerNomeLinha(this.linhaSelecionada!.lt);
+          this.exibirToast('Linha removida dos favoritos');
+        }
       });
-      this.exibirToast('✅ Linha salva nos favoritos!');
+    } else {
+      const nomeLinha = `${this.linhaSelecionada.tp} → ${this.linhaSelecionada.ts}`;
+      this.linhaServico.salvarLinha(this.linhaSelecionada.lt).subscribe({
+        next: (linhaSalva) => {
+          this.linhaServico.favoritar(usuario.id, linhaSalva.id).subscribe({
+            next: (usuarioAtualizado) => {
+              this.autenticacao.salvarUsuario(usuarioAtualizado);
+              this.linhaServico.salvarNomeLinha(this.linhaSelecionada!.lt, nomeLinha);
+              this.exibirToast('Linha salva nos favoritos!');
+            }
+          });
+        }
+      });
     }
   }
 
@@ -184,6 +225,12 @@ export class BuscaComponent {
     this.veiculos = [];
     this.termoBusca = '';
     this.buscaRealizada = false;
+  }
+
+  private exibirAvisoEndpoint(mensagem: string): void {
+    this.avisoEndpoint = mensagem;
+    this.mostrarAvisoEndpoint = true;
+    setTimeout(() => this.mostrarAvisoEndpoint = false, 5000);
   }
 
   private exibirToast(mensagem: string): void {

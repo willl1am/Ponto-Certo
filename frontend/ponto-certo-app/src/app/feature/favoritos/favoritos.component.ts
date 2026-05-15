@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FavoritosMockService, Favorito } from '../../core/services/favoritos-mock.service';
+import { AuthService, LinhaFavorita } from '../../core/services/auth.service';
+import { LinhaService } from '../../core/services/linha.service';
 
-type OrdemFavorito = 'linha' | 'parada';
+type OrdemFavorito = 'linha';
 
 @Component({
   selector: 'app-favoritos',
@@ -13,31 +14,35 @@ type OrdemFavorito = 'linha' | 'parada';
 })
 export class FavoritosComponent implements OnInit {
 
-  private favoritosService = inject(FavoritosMockService);
+  private autenticacao = inject(AuthService);
+  private linhaServico = inject(LinhaService);
 
-  favoritos: Favorito[] = [];
+  favoritos: LinhaFavorita[] = [];
   ordem: OrdemFavorito = 'linha';
 
   ngOnInit(): void {
     this.carregar();
   }
 
-  remover(id: number): void {
-    this.favoritosService.remove(id);
-    this.carregar();
+  nomeDaLinha(letreiro: string): string {
+    return this.linhaServico.obterNomeLinha(letreiro);
   }
 
-  ordenarPor(ordem: OrdemFavorito): void {
-    this.ordem = ordem;
-    this.carregar();
+  remover(linhaId: number): void {
+    const usuario = this.autenticacao.obterUsuario();
+    if (!usuario) return;
+
+    this.linhaServico.removerFavorito(usuario.id, linhaId).subscribe({
+      next: (usuarioAtualizado) => {
+        this.autenticacao.salvarUsuario(usuarioAtualizado);
+        this.carregar();
+      }
+    });
   }
 
   private carregar(): void {
-    const lista = this.favoritosService.getAll();
-    this.favoritos = lista.sort((a, b) => {
-      const campoA = this.ordem === 'linha' ? a.letreiro : a.nomeParada;
-      const campoB = this.ordem === 'linha' ? b.letreiro : b.nomeParada;
-      return campoA.localeCompare(campoB);
-    });
+    const usuario = this.autenticacao.obterUsuario();
+    const lista = usuario?.linhasFavoritas ?? [];
+    this.favoritos = [...lista].sort((a, b) => a.letreiro.localeCompare(b.letreiro));
   }
 }

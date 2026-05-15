@@ -43,6 +43,18 @@
       }
 
       @if (!loading && !erro && linhas.length > 0) {
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <h2 class="fs-5 fw-semibold mb-0">Com as paradas {{ paradasDaBusca }}</h2>
+          <button class="btn btn-sm fw-semibold"
+            [class.btn-warning]="!jaFavoritadoPrimeira"
+            [class.btn-outline-warning]="jaFavoritadoPrimeira"
+            (click)="favoritarPrimeiraDaBusca()">
+            <i class="bi me-1"
+              [class.bi-star]="!jaFavoritadoPrimeira"
+              [class.bi-star-fill]="jaFavoritadoPrimeira"></i>
+            {{ jaFavoritadoPrimeira ? 'Remover dos favoritos' : 'Favoritar' }}
+          </button>
+        </div>
         <p class="text-muted small mb-3">
           {{ linhas.length }} linhas encontradas para <strong>"{{ termoBusca }}"</strong>
         </p>
@@ -261,6 +273,13 @@
 
   </div>
 </main>
+
+@if (mostrarAvisoEndpoint) {
+  <div class="aviso-endpoint">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <span>{{ avisoEndpoint }}</span>
+  </div>
+}
 
 @if (mostrarToast) {
   <div class="toast-container">

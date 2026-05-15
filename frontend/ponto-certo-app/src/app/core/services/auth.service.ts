@@ -3,10 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
+export interface LinhaFavorita {
+  id: number;
+  letreiro: string;
+}
+
 export interface Usuario {
   id: number;
   nome: string;
   email: string;
+  linhasFavoritas: LinhaFavorita[];
 }
 
 @Injectable({
@@ -25,7 +31,7 @@ export class AuthService {
 
   login(email: string, senha: string): Observable<Usuario> {
     return this.http.post<Usuario>(`${this.urlBase}/usuarios/login`, { email, senha }).pipe(
-      tap(usuario => localStorage.setItem(this.chaveArmazenamento, JSON.stringify(usuario)))
+      tap(usuario => this.salvarUsuario(usuario))
     );
   }
 
@@ -37,6 +43,10 @@ export class AuthService {
   obterUsuario(): Usuario | null {
     const dados = localStorage.getItem(this.chaveArmazenamento);
     return dados ? JSON.parse(dados) : null;
+  }
+
+  salvarUsuario(usuario: Usuario): void {
+    localStorage.setItem(this.chaveArmazenamento, JSON.stringify(usuario));
   }
 
   estaLogado(): boolean {
