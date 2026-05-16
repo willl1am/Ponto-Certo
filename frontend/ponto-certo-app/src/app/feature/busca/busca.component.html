@@ -224,6 +224,14 @@
             </div>
           }
 
+          @if (!loading && veiculos.length === 0) {
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-bus-front display-4 d-block mb-3 opacity-25"></i>
+              <p class="fw-semibold mb-1">Nenhum ônibus previsto para esta parada.</p>
+              <p class="small">Tente atualizar ou escolha outra parada.</p>
+            </div>
+          }
+
           @if (!loading) {
             @for (veiculo of veiculos; track veiculo.p; let last = $last) {
               <div class="d-flex align-items-center gap-4 py-3" [class.border-bottom]="!last">

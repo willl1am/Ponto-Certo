@@ -40,7 +40,7 @@ public class LinhaController {
     @GetMapping("/paradas")
     public String buscarParadasDaLinha(@RequestParam String codigoLinha) throws Exception {
         String codigoLinhaFormatado = URLEncoder.encode(codigoLinha, StandardCharsets.UTF_8);
-        return consumoApi.obterDadosSPTrans("/Previsao/Linha?codigoLinha" + codigoLinhaFormatado);
+        return consumoApi.obterDadosSPTrans("/Previsao/Linha?codigoLinha=" + codigoLinhaFormatado);
     }
 
 

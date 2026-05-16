@@ -59,6 +59,8 @@ export class BuscaComponent implements OnInit {
   paradas: Parada[] = [];
   veiculos: Veiculo[] = [];
 
+  private dadosPrevisao: any = null;
+
   private readonly PARADAS_MOCK: Parada[] = [
     { cp: 101, np: 'Terminal Lapa',       ed: 'Av. Antártica, 381 — Lapa'       },
     { cp: 102, np: 'Av. Paulista / MASP', ed: 'Av. Paulista, 1578 — Bela Vista' },
@@ -148,35 +150,74 @@ export class BuscaComponent implements OnInit {
     this.step = 2;
     this.loading = true;
     this.paradas = [];
-    this.exibirAvisoEndpoint('Endpoint GET /paradas/buscar-sptrans não implementado no backend. Exibindo dados mock.');
-    setTimeout(() => {
-      this.loading = false;
-      this.paradas = this.PARADAS_MOCK;
-    }, 600);
+    this.dadosPrevisao = null;
+
+    this.linhaServico.buscarPrevisaoPorLinha(linha.cl).subscribe({
+      next: (resultado) => {
+        const dados = typeof resultado === 'string' ? JSON.parse(resultado) : resultado;
+        this.dadosPrevisao = dados;
+        this.horarioAtualizacao = dados.hr ?? this.horaAtual();
+        this.loading = false;
+        this.paradas = (dados.ps ?? []).map((p: any) => ({
+          cp: p.cp,
+          np: p.np,
+          ed: ''
+        }));
+        if (this.paradas.length === 0) {
+          this.exibirAvisoEndpoint('Nenhuma previsão disponível para esta linha no momento.');
+        }
+      },
+      error: () => {
+        this.loading = false;
+        this.exibirAvisoEndpoint('Não foi possível carregar as paradas. Exibindo dados mock.');
+        this.paradas = this.PARADAS_MOCK;
+      }
+    });
   }
 
   verPrevisao(parada: Parada): void {
     this.paradaSelecionada = parada;
     this.step = 3;
-    this.loading = true;
     this.veiculos = [];
-    this.exibirAvisoEndpoint('Endpoint GET /previsao não implementado no backend. Exibindo dados mock.');
-    setTimeout(() => {
-      this.loading = false;
-      this.veiculos = this.VEICULOS_MOCK;
-      this.horarioAtualizacao = this.horaAtual();
-    }, 600);
+    this.carregarVeiculosDaParada(parada.cp);
+  }
+
+  private carregarVeiculosDaParada(cp: number): void {
+    if (!this.dadosPrevisao?.ps) return;
+    const paradaDados = this.dadosPrevisao.ps.find((p: any) => p.cp === cp);
+    this.veiculos = (paradaDados?.vs ?? []).map((v: any) => ({
+      p: String(v.p),
+      t: v.t,
+      a: v.a,
+      minutos: this.calcularMinutos(v.t)
+    }));
+    this.horarioAtualizacao = this.dadosPrevisao.hr ?? this.horaAtual();
   }
 
   atualizar(): void {
+    if (!this.linhaSelecionada) return;
     this.loading = true;
     this.veiculos = [];
-    this.exibirAvisoEndpoint('Endpoint GET /previsao não implementado no backend. Exibindo dados mock.');
-    setTimeout(() => {
-      this.loading = false;
-      this.veiculos = this.VEICULOS_MOCK;
-      this.horarioAtualizacao = this.horaAtual();
-    }, 800);
+
+    this.linhaServico.buscarPrevisaoPorLinha(this.linhaSelecionada.cl).subscribe({
+      next: (resultado) => {
+        const dados = typeof resultado === 'string' ? JSON.parse(resultado) : resultado;
+        this.dadosPrevisao = dados;
+        this.loading = false;
+        this.paradas = (dados.ps ?? []).map((p: any) => ({
+          cp: p.cp,
+          np: p.np,
+          ed: ''
+        }));
+        if (this.paradaSelecionada) {
+          this.carregarVeiculosDaParada(this.paradaSelecionada.cp);
+        }
+      },
+      error: () => {
+        this.loading = false;
+        this.exibirAvisoEndpoint('Não foi possível atualizar a previsão.');
+      }
+    });
   }
 
   toggleFavorito(): void {
@@ -237,6 +278,15 @@ export class BuscaComponent implements OnInit {
     this.toastMensagem = mensagem;
     this.mostrarToast = true;
     setTimeout(() => this.mostrarToast = false, 3000);
+  }
+
+  private calcularMinutos(horario: string): number {
+    const agora = new Date();
+    const [h, m] = horario.split(':').map(Number);
+    const chegada = new Date();
+    chegada.setHours(h, m, 0, 0);
+    if (chegada < agora) chegada.setDate(chegada.getDate() + 1);
+    return Math.round((chegada.getTime() - agora.getTime()) / 60000);
   }
 
   private horaAtual(): string {

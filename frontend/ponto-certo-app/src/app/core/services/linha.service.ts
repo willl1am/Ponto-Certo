@@ -66,4 +66,10 @@ export class LinhaService {
   removerFavorito(usuarioId: number, linhaId: number): Observable<Usuario> {
     return this.http.delete<Usuario>(`${this.urlBase}/usuarios/${usuarioId}/favoritar/${linhaId}`);
   }
+
+  buscarPrevisaoPorLinha(codigoLinha: number): Observable<any> {
+    return this.http.get<any>(`${this.urlBase}/linhas/paradas`, {
+      params: { codigoLinha: String(codigoLinha) }
+    });
+  }
 }
