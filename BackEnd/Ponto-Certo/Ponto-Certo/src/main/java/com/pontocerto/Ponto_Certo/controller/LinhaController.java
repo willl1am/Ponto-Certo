@@ -37,6 +37,11 @@ public class LinhaController {
         String termoFormatado = URLEncoder.encode(termo, StandardCharsets.UTF_8);
         return consumoApi.obterDadosSPTrans("/Linha/Buscar?termosBusca=" + termoFormatado);
     }
+    @GetMapping("/paradas")
+    public String buscarParadasDaLinha(@RequestParam String codigoLinha) throws Exception {
+        String codigoLinhaFormatado = URLEncoder.encode(codigoLinha, StandardCharsets.UTF_8);
+        return consumoApi.obterDadosSPTrans("/Previsao/Linha?codigoLinha" + codigoLinhaFormatado);
+    }
 
 
 }
