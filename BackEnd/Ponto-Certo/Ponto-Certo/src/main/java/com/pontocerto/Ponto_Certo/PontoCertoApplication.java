@@ -22,6 +22,8 @@ public class PontoCertoApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		System.out.println("Iniciando teste com a SPTrans...");
+
+		System.out.println("Digite o numero");
 		Scanner leitura = new Scanner(System.in);
 		String termoBusca = leitura.nextLine();
 		String termoFormatado = URLEncoder.encode(termoBusca, StandardCharsets.UTF_8);
@@ -31,7 +33,14 @@ public class PontoCertoApplication implements CommandLineRunner {
 		System.out.println("Resposta da SPTrans:");
 		System.out.println(jsonResposta);
 
+		System.out.println("Digite o numero");
 
+		String busca = leitura.nextLine();
+		String buscaFormatado = URLEncoder.encode(busca, StandardCharsets.UTF_8);
+		String jsonResponde = consumoApi.obterDadosSPTrans("/Previsao/Linha?codigoLinha=" + buscaFormatado);
+
+		System.out.println("Resposta da SPTrans:");
+		System.out.println(jsonResponde);
 
 	}
 

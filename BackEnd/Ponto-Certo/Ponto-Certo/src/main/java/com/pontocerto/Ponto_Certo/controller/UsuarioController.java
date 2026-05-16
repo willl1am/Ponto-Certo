@@ -58,6 +58,6 @@ public class UsuarioController {
         user.getLinhasFavoritas().remove(linha);
         return usuarioRepository.save(user);
     }
-
+    
 }
 
