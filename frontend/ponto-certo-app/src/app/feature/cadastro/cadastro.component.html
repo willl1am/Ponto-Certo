@@ -1,0 +1,95 @@
+<div class="auth-page d-flex align-items-center justify-content-center min-vh-100 bg-light">
+  <div class="auth-card card border-0 shadow-sm w-100" style="max-width: 420px">
+    <div class="card-body p-4 p-md-5">
+
+      <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center gap-2 text-primary mb-3">
+          <i class="bi bi-bus-front-fill fs-1"></i>
+        </div>
+        <h1 class="fs-3 fw-bold mb-1">Criar conta</h1>
+        <p class="text-muted small">Acesse o Ponto Certo de qualquer lugar</p>
+      </div>
+
+      <form (submit)="criar($event)" novalidate>
+
+        @if (erro) {
+          <div class="alert alert-danger py-2 small" role="alert">
+            <i class="bi bi-exclamation-circle me-1"></i>{{ erro }}
+          </div>
+        }
+
+        <div class="mb-3">
+          <label for="nome" class="form-label fw-semibold">Nome</label>
+          <input
+            id="nome"
+            type="text"
+            class="form-control form-control-lg"
+            placeholder="Seu nome completo"
+            [(ngModel)]="nome"
+            name="nome"
+            autocomplete="name"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label fw-semibold">E-mail</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control form-control-lg"
+            placeholder="seu@email.com"
+            [(ngModel)]="email"
+            name="email"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="senha" class="form-label fw-semibold">Senha</label>
+          <input
+            id="senha"
+            type="password"
+            class="form-control form-control-lg"
+            placeholder="Mínimo 6 caracteres"
+            [(ngModel)]="senha"
+            name="senha"
+            autocomplete="new-password"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="confirmarSenha" class="form-label fw-semibold">Confirmar senha</label>
+          <input
+            id="confirmarSenha"
+            type="password"
+            class="form-control form-control-lg"
+            placeholder="Repita a senha"
+            [(ngModel)]="confirmarSenha"
+            name="confirmarSenha"
+            autocomplete="new-password"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 btn-lg" [disabled]="carregando">
+          @if (carregando) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            Criando conta...
+          } @else {
+            Criar conta
+          }
+        </button>
+
+      </form>
+
+      <hr class="my-4" />
+
+      <p class="text-center text-muted small mb-0">
+        Já tem uma conta?
+        <a routerLink="/login" class="fw-semibold text-primary text-decoration-none">
+          Fazer login
+        </a>
+      </p>
+
+    </div>
+  </div>
+</div>

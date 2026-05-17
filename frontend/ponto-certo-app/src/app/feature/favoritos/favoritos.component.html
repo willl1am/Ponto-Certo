@@ -1,0 +1,50 @@
+<main class="py-4">
+  <div class="container">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h1 class="fs-4 fw-bold mb-0 d-flex align-items-center gap-2">
+        <i class="bi bi-star-fill text-warning"></i>
+        Favoritos
+      </h1>
+    </div>
+
+    @if (favoritos.length > 0) {
+      <div class="row g-3">
+        @for (fav of favoritos; track fav.id) {
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="badge fs-5 fw-bold bg-primary px-3 py-2">{{ fav.letreiro }}</span>
+                  <button class="btn btn-sm border-0 text-danger p-1"
+                    aria-label="Remover favorito"
+                    (click)="remover(fav.id)">
+                    <i class="bi bi-trash fs-5"></i>
+                  </button>
+                </div>
+                @if (nomeDaLinha(fav.letreiro)) {
+                  <p class="text-muted small mb-3 fw-semibold">
+                    <i class="bi bi-arrow-left-right me-1"></i>{{ nomeDaLinha(fav.letreiro) }}
+                  </p>
+                }
+                <a [routerLink]="['/busca']" [queryParams]="{ q: fav.letreiro }" class="btn btn-primary w-100 mt-auto">
+                  <i class="bi bi-search me-2"></i>Buscar linha
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="text-center py-5 text-muted">
+        <i class="bi bi-star display-1 d-block mb-3 opacity-25"></i>
+        <p class="fs-4 fw-semibold">Nenhum favorito salvo ainda.</p>
+        <p class="mb-4">Busque uma linha, escolha uma parada e salve nos favoritos.</p>
+        <a routerLink="/busca" class="btn btn-primary px-5">
+          <i class="bi bi-search me-2"></i>Buscar linha
+        </a>
+      </div>
+    }
+
+  </div>
+</main>
