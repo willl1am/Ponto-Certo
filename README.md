@@ -155,7 +155,7 @@ Centro Universitário Senac
 | Nome |
 |---|
 | Lucas Carlos da Silva |
-| William Santiago da Silva |
+| William Santiago Gracioso |
 | Yuri Yamada Fernandes |
 
 ---
