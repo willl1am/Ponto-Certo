@@ -8,6 +8,12 @@ Ponto Certo é uma aplicação web que permite ao usuário buscar linhas de ôni
 
 ## 📸 Telas
 
+### Login
+![Login](./docs/images/tela-login.png)
+
+### Cadastro
+![Cadastro](./docs/images/tela-cadastro.png)
+
 ### Tela Inicial
 ![Tela Inicial](./docs/images/tela-inicio.png)
 
